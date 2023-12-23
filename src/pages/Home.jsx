@@ -7,19 +7,35 @@ import { callFetchEmployee, callDeleteEmployee } from "../config/api";
 import AddEmployee from "./AddEmployee";
 import dayjs from "dayjs";
 import EditEmployee from "./EditEmployee";
+import EmployeeViewDetail from "./EmployeeViewDetail";
 
 function Home() {
   const [searchData, setSearchData] = useState("");
   const [searchPagination, setSearchPagination] = useState(
     "current=1&pageSize=5"
   );
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [dataViewDetail, setDataViewDetail] = useState();
+  const [openViewDetail, setOpenViewDetail] = useState(false);
 
   const columns = [
     {
       title: "ID",
       dataIndex: "_id",
       key: "id",
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => {
+        return (
+          <a
+            href="#"
+            onClick={() => {
+              setDataViewDetail(record);
+              setOpenViewDetail(true);
+            }}>
+            {record._id}
+          </a>
+        );
+      },
     },
     {
       title: "Name",
@@ -82,11 +98,15 @@ function Home() {
     },
   ];
   const handleDeleteUser = async (id) => {
+    console.log("check id delete", id);
     const result = await callDeleteEmployee(id);
     console.log("check result delete", result);
     if (result.status === 200) {
       await handleFetchEmployee();
       message.success("delete success!");
+      if (listEmployees?.result.length === 1 && current !== 1) {
+        setCurrent((prev) => prev - 1);
+      }
     } else {
       message.error("delete failed!");
     }
@@ -98,19 +118,36 @@ function Home() {
         <span>Table List Employee</span>
 
         <AddEmployee handleFetchEmployee={handleFetchEmployee} />
+        <EmployeeViewDetail
+          openViewDetail={openViewDetail}
+          setOpenViewDetail={setOpenViewDetail}
+          dataViewDetail={dataViewDetail}
+        />
       </div>
     );
   };
   const [listEmployees, setListEmployees] = useState([]);
-  let query = `${searchPagination}${searchData}`;
+  let query = `current=${current}&pageSize=${pageSize}${searchData}`;
   const handleFetchEmployee = async () => {
     const res = await callFetchEmployee(query);
     setListEmployees(res.data);
   };
+  console.log("employee >>>", listEmployees);
 
   useEffect(() => {
     handleFetchEmployee();
-  }, []);
+  }, [query]);
+
+  const onChange = (pagination, filters, sorter, extra) => {
+    if (pagination && pagination.current !== current) {
+      setCurrent(pagination.current);
+    }
+
+    if (pagination && pagination.pageSize !== pageSize) {
+      setPageSize(pagination.pageSize);
+      setCurrent(1);
+    }
+  };
   return (
     <>
       <Row gutter={[20, 20]}>
@@ -123,6 +160,22 @@ function Home() {
         title={renderHeader}
         columns={columns}
         dataSource={listEmployees?.result}
+        rowKey={"_id"}
+        // loading={loading}
+        onChange={onChange}
+        pagination={{
+          current: current,
+          pageSize: pageSize,
+          showSizeChanger: true,
+          total: listEmployees.meta?.total,
+          showTotal: (total, range) => {
+            return (
+              <div>
+                {range[0]}-{range[1]} trên {total} rows
+              </div>
+            );
+          },
+        }}
       />
     </>
   );

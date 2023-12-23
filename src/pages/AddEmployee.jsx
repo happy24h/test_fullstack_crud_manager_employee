@@ -37,6 +37,7 @@ const AddEmployee = (props) => {
       // eslint-disable-next-line react/prop-types
       props.handleFetchEmployee();
       setIsModalOpen(false);
+      form.resetFields();
       message.success("create a employees success!");
     } else {
       message.error("create a employee failed!");
