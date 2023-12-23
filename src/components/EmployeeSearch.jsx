@@ -1,24 +1,25 @@
-import { Form, Input, Row, Col, Button, Select } from "antd";
+import { Form, Input, Row, Col, Button } from "antd";
 // import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 // import { ALL_GENDER } from "../../../utils/constants/permissions";
 
-function EmployeeSearch() {
+function EmployeeSearch(props) {
   /////
   const [form] = Form.useForm();
-  const onFinish = async () => {
-    // let query = "";
-    // if (values.email) {
-    //   query += `&email=${values.email}`;
-    // }
-    // if (values.gender) {
-    //   query += `&gender=${values.gender}`;
-    // }
-
-    // if (values.email || values.gender) {
-    //   props.handleSearch(query);
-    // } else {
-    //   props.handleSearch("");
-    // }
+  const onFinish = async (values) => {
+    let query = "";
+    if (values.name) {
+      query += `&name=${values.name}`;
+    }
+    if (values.address) {
+      query += `&address=${values.address}`;
+    }
+    if (values.name || values.address) {
+      // eslint-disable-next-line react/prop-types
+      props.handleSearch(query);
+    } else {
+      // eslint-disable-next-line react/prop-types
+      props.handleSearch("");
+    }
   };
 
   const resetForm = () => {
@@ -37,24 +38,15 @@ function EmployeeSearch() {
           borderRadius: 6,
         }}>
         <Col span={8}>
-          <Form.Item name={`email`} label={`Email`}>
-            <Input placeholder="Tìm kiếm địa chỉ email..." />
+          <Form.Item name="name" label="Name">
+            <Input placeholder="Tìm kiếm tên nhân viên..." />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={`email`} label={`Email`}>
-            <Input placeholder="Tìm kiếm địa chỉ email..." />
+          <Form.Item name="address" label="Address">
+            <Input placeholder="Tìm kiếm địa chỉ nhân viên..." />
           </Form.Item>
         </Col>
-        {/* <Col span={8}>
-          <Form.Item name={`gender`} label={`Giới tính`}>
-            <Select
-              showSearch
-              placeholder="Tìm kiếm giới tính..."
-              options={ALL_GENDER}
-            />
-          </Form.Item>
-        </Col> */}
         <Col
           span={8}
           style={{

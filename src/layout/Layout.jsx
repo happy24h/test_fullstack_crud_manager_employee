@@ -4,7 +4,7 @@ import {
   PlusCircleOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Layout, theme } from "antd";
+import { Layout } from "antd";
 import Sidebar from "../components/sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -32,12 +32,6 @@ const items = [
 console.log("check item", items);
 // eslint-disable-next-line react/prop-types
 const LayoutDefault = ({ children }) => {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
-  console.log("check style", colorBgContainer, borderRadiusLG);
-  //   console.log("check color bg container", colorBgContainer);
   return (
     <Layout>
       <Sidebar />

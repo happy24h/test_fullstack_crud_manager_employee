@@ -1,122 +1,129 @@
 import { Space, Table, Tag } from "antd";
 import { Row, Col, Button, Popconfirm, message } from "antd";
-import {
-  DeleteOutlined,
-  EditTwoTone,
-  PlusCircleOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import EmployeeSearch from "../components/EmployeeSearch";
-// ID/Name/Date of Bird/Gender/Email/Address)
-const columns = [
-  {
-    title: "ID",
-    dataIndex: "id",
-    key: "id",
-    render: (text) => <a>{text}</a>,
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Date of Bird",
-    dataIndex: "date_of_bird",
-    key: "date_of_bird",
-  },
-  {
-    title: "Gender",
-    key: "gender",
-    dataIndex: "gender",
-    render: (text) => {
-      let color = text.length > 5 ? "volcano" : "geekblue";
-      return <Tag color={color}>{text}</Tag>;
-    },
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <Button style={{ border: "1px solid #f57800" }} type="primary" ghost>
-          {/* <EditOutlined twoToneColor="red" style={{ cursor: "pointer" }} /> */}
-          <EditTwoTone twoToneColor="#f57800" style={{ cursor: "pointer" }} />
-        </Button>
-        <Popconfirm
-          placement="leftTop"
-          title={"Xác nhận xóa user"}
-          description={"Bạn có chắc chắn muốn xóa user này ?"}
-          //   onConfirm={() => handleDeleteUser(record._id)}
-          okText="Xác nhận"
-          cancelText="Hủy">
-          <Button type="primary" danger ghost>
-            <DeleteOutlined />
-          </Button>
-        </Popconfirm>
-      </Space>
-    ),
-  },
-];
-// ID/Name/Date of Bird/Gender/Email/Address
-const data = [
-  {
-    id: "1",
-    name: "John Brown 1",
-    date_of_bird: "03/09/1999",
-    gender: "Male",
-    email: "vietanhhappy99@gmail.com",
-    address: "Hà Nội",
-  },
-  {
-    id: "2",
-    name: "John Brown 2",
-    date_of_bird: "03/10/1995",
-    gender: "Female",
-    email: "test@gmail.com",
-    address: "Hà Nội",
-  },
-  {
-    id: "3",
-    name: "John Brown 3",
-    date_of_bird: "03/10/1993",
-    gender: "Male",
-    email: "hello@gmail.com",
-    address: "Hà Nội",
-  },
-];
-
-const renderHeader = () => {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <span>Table List Employee</span>
-      <span style={{ display: "flex", gap: 15 }}>
-        <Button
-          type="primary"
-          //   onClick={() => handleExportData()}
-          icon={<PlusCircleOutlined />}>
-          Add Employee
-        </Button>
-        {/* {modalAdd()} */}
-      </span>
-    </div>
-  );
-};
+import { useEffect, useState } from "react";
+import { callFetchEmployee, callDeleteEmployee } from "../config/api";
+import AddEmployee from "./AddEmployee";
+import dayjs from "dayjs";
+import EditEmployee from "./EditEmployee";
 
 function Home() {
+  const [searchData, setSearchData] = useState("");
+  const [searchPagination, setSearchPagination] = useState(
+    "current=1&pageSize=5"
+  );
+
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "_id",
+      key: "id",
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Date of Bird",
+      dataIndex: "date_of_bird",
+      key: "date_of_bird",
+      render: (text) => {
+        // Chuyển đổi chuỗi ngày thành đối tượng ngày
+        const dateObject = dayjs(text);
+        // Định dạng lại theo định dạng 'DD/MM/YYYY'
+        const formattedDate = dateObject.format("DD/MM/YYYY");
+        return formattedDate;
+      },
+    },
+    {
+      title: "Gender",
+      key: "gender",
+      dataIndex: "gender",
+      render: (text) => {
+        let color = text.length > 5 ? "volcano" : "geekblue";
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <EditEmployee
+            id={record._id}
+            handleFetchEmployee={handleFetchEmployee}
+          />
+          <Popconfirm
+            placement="leftTop"
+            title={"Xác nhận xóa nhân viên"}
+            description={"Bạn có chắc chắn muốn xóa nhân viên này ?"}
+            onConfirm={() => handleDeleteUser(record._id)}
+            okText="Xác nhận"
+            cancelText="Hủy">
+            <Button type="primary" danger ghost>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+  const handleDeleteUser = async (id) => {
+    const result = await callDeleteEmployee(id);
+    console.log("check result delete", result);
+    if (result.status === 200) {
+      await handleFetchEmployee();
+      message.success("delete success!");
+    } else {
+      message.error("delete failed!");
+    }
+  };
+
+  const renderHeader = () => {
+    return (
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <span>Table List Employee</span>
+
+        <AddEmployee handleFetchEmployee={handleFetchEmployee} />
+      </div>
+    );
+  };
+  const [listEmployees, setListEmployees] = useState([]);
+  let query = `${searchPagination}${searchData}`;
+  const handleFetchEmployee = async () => {
+    const res = await callFetchEmployee(query);
+    setListEmployees(res.data);
+  };
+
+  useEffect(() => {
+    handleFetchEmployee();
+  }, []);
   return (
     <>
       <Row gutter={[20, 20]}>
         <Col span={24}>
           {/* <UserSearch handleSearch={setSearchData} /> */}
-          <EmployeeSearch />
+          <EmployeeSearch handleSearch={setSearchData} />
         </Col>
       </Row>
-      <Table title={renderHeader} columns={columns} dataSource={data} />
+      <Table
+        title={renderHeader}
+        columns={columns}
+        dataSource={listEmployees?.result}
+      />
     </>
   );
 }
