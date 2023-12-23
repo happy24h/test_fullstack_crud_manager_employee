@@ -54,7 +54,7 @@ const EditEmployee = (props) => {
 
   useEffect(() => {
     form.setFieldsValue(detailEmployee);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailEmployee]);
 
   return (
@@ -86,10 +86,10 @@ const EditEmployee = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter user name",
+                    message: "Vui lòng nhập tên",
                   },
                 ]}>
-                <Input placeholder="Please enter user name" />
+                <Input placeholder="Vui lòng nhập tên" />
               </Form.Item>
             </Col>
           </Row>
@@ -106,8 +106,9 @@ const EditEmployee = (props) => {
                 ]}>
                 <DatePicker
                   style={{ width: "100%" }}
-                  defaultValue={dayjs("01/01/2015", dateFormatList[0])}
+                  defaultValue={undefined}
                   format={dateFormatList}
+                  placeholder="Vui lòng chọn ngày sinh"
                 />
               </Form.Item>
             </Col>

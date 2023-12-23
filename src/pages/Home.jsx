@@ -11,9 +11,6 @@ import EmployeeViewDetail from "./EmployeeViewDetail";
 
 function Home() {
   const [searchData, setSearchData] = useState("");
-  const [searchPagination, setSearchPagination] = useState(
-    "current=1&pageSize=5"
-  );
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [dataViewDetail, setDataViewDetail] = useState();
@@ -138,7 +135,7 @@ function Home() {
     handleFetchEmployee();
   }, [query]);
 
-  const onChange = (pagination, filters, sorter, extra) => {
+  const onChange = (pagination) => {
     if (pagination && pagination.current !== current) {
       setCurrent(pagination.current);
     }

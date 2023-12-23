@@ -11,14 +11,11 @@ import {
   Select,
   message,
 } from "antd";
-import dayjs from "dayjs";
 import { callCreateEmployee } from "../config/api";
 // import { DatePicker, Space } from 'antd';
 const { Option } = Select;
 const AddEmployee = (props) => {
   const [form] = Form.useForm();
-
-  // const { RangePicker } = DatePicker;
 
   const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
 
@@ -68,10 +65,10 @@ const AddEmployee = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter user name",
+                    message: "Vui lòng nhập tên",
                   },
                 ]}>
-                <Input placeholder="Please enter user name" />
+                <Input placeholder="Vui lòng nhập tên" />
               </Form.Item>
             </Col>
           </Row>
@@ -88,8 +85,9 @@ const AddEmployee = (props) => {
                 ]}>
                 <DatePicker
                   style={{ width: "100%" }}
-                  defaultValue={dayjs("01/01/2015", dateFormatList[0])}
+                  defaultValue={undefined}
                   format={dateFormatList}
+                  placeholder="Vui lòng chọn ngày sinh"
                 />
               </Form.Item>
             </Col>
