@@ -15,6 +15,7 @@ function Home() {
   const [pageSize, setPageSize] = useState(5);
   const [dataViewDetail, setDataViewDetail] = useState();
   const [openViewDetail, setOpenViewDetail] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const columns = [
     {
@@ -132,13 +133,15 @@ function Home() {
   const [listEmployees, setListEmployees] = useState([]);
   let query = `current=${current}&pageSize=${pageSize}${searchData}&sort=-updatedAt`;
   const handleFetchEmployee = async () => {
+    setLoading(true);
     const res = await callFetchEmployee(query);
     setListEmployees(res.data);
+    setLoading(false);
   };
-  console.log("employee >>>", listEmployees);
 
   useEffect(() => {
     handleFetchEmployee();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   const onChange = (pagination) => {
@@ -164,7 +167,7 @@ function Home() {
         columns={columns}
         dataSource={listEmployees?.result}
         rowKey={"_id"}
-        // loading={loading}
+        loading={loading}
         onChange={onChange}
         pagination={{
           current: current,

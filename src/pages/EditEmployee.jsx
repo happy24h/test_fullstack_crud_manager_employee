@@ -30,15 +30,22 @@ const EditEmployee = (props) => {
   };
 
   const onFinish = async (values) => {
-    // eslint-disable-next-line react/prop-types
-    const res = await callUpdateEmployee(props.id, values);
-    if (res.status === 200) {
+    try {
       // eslint-disable-next-line react/prop-types
-      props.handleFetchEmployee();
-      setIsModalOpen(false);
-      message.success("update a employee success!");
-    } else {
-      message.error("update a employee failed!");
+      const res = await callUpdateEmployee(props.id, values);
+      if (res.status === 200) {
+        // eslint-disable-next-line react/prop-types
+        props.handleFetchEmployee();
+        setIsModalOpen(false);
+        message.success("update a employee success!");
+      }
+      // else {
+      //   message.error("update a employee failed!");
+      // }
+    } catch (error) {
+      if (error.response.data?.message.length > 0) {
+        message.error(error.response.data.message[0]);
+      }
     }
   };
   const fetchEmployeeById = async () => {
