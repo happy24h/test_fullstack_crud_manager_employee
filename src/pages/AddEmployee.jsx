@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import { PlusOutlined } from "@ant-design/icons";
 import {
   Modal,
   Button,
@@ -12,7 +11,6 @@ import {
   message,
 } from "antd";
 import { callCreateEmployee } from "../config/api";
-// import { DatePicker, Space } from 'antd';
 const { Option } = Select;
 const AddEmployee = (props) => {
   const [form] = Form.useForm();
@@ -29,15 +27,22 @@ const AddEmployee = (props) => {
   };
 
   const onFinish = async (values) => {
-    const res = await callCreateEmployee(values);
-    if (res.status === 201) {
-      // eslint-disable-next-line react/prop-types
-      props.handleFetchEmployee();
-      setIsModalOpen(false);
-      form.resetFields();
-      message.success("create a employees success!");
-    } else {
-      message.error("create a employee failed!");
+    try {
+      const res = await callCreateEmployee(values);
+      if (res.status === 201) {
+        // eslint-disable-next-line react/prop-types
+        props.handleFetchEmployee();
+        setIsModalOpen(false);
+        form.resetFields();
+        message.success("create a employees success!");
+      }
+      // else {
+      //   message.error("create a employee failed!");
+      // }
+    } catch (error) {
+      if (error.response.data?.message.length > 0) {
+        message.error(error.response.data.message[0]);
+      }
     }
   };
   return (
