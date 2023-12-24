@@ -38,6 +38,9 @@ function Home() {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      sortDirections: ["ascend", "descend"],
+      // className: "no-sort",
     },
     {
       title: "Date of Bird",
@@ -69,6 +72,9 @@ function Home() {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      sorter: (a, b) => a.address.localeCompare(b.address),
+      sortDirections: ["ascend", "descend"],
+      // className: "no-sort",
     },
     {
       title: "Action",
@@ -124,7 +130,7 @@ function Home() {
     );
   };
   const [listEmployees, setListEmployees] = useState([]);
-  let query = `current=${current}&pageSize=${pageSize}${searchData}`;
+  let query = `current=${current}&pageSize=${pageSize}${searchData}&sort=-updatedAt`;
   const handleFetchEmployee = async () => {
     const res = await callFetchEmployee(query);
     setListEmployees(res.data);
